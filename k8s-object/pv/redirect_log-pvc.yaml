@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: redirect-pvc
+  namespace: kafe
+spec:
+  storageClassName: gp2
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi

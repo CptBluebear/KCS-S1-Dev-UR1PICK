@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: kafe-preview
+  name: kafe-preview
+  namespace: kafe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafe-preview
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: kafe-preview
+    spec:
+      containers:
+      - image: 839325387125.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-preview:latest
+        name: kafe-preview
+        imagePullPolicy: Always
+        resources: {}
+        volumeMounts:
+        - name: properties
+          mountPath: /configuration
+          readOnly: true
+      volumes:
+      - name: properties
+        secret:
+          secretName: preview-properties
+          optional: false
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: kafe-preview
+  name: kafe-preview
+  namespace: kafe
+spec:
+  ports:
+  - port: 48083
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: kafe-preview
+  type: NodePort
+status:
+  loadBalancer: {}
+

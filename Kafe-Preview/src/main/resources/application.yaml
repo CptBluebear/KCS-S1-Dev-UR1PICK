@@ -1,0 +1,34 @@
+spring:
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql:3306/kafe_database?serverTimezone=Asia/Seoul&characterEncoding=utf8
+    username: kafe
+    password: "kakaoPass123#"
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+selenium:
+  host: http://selenium-standalone:4444
+
+aws:
+  access-key: AKIA4G25RBF24ULIN4PY
+  secret-key: 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
+  bucket-name: kafe-one-preview

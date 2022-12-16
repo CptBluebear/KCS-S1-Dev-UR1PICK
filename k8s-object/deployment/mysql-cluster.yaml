@@ -1,0 +1,24 @@
+apiVersion: mysql.oracle.com/v2
+kind: InnoDBCluster
+metadata:
+  name: mycluster
+  namespace: mysql-cluster
+spec:
+  secretName: mypwds
+  tlsUseSelfSigned: true
+  instances: 2
+  version: 8.0.31
+  router:
+    instances: 2
+    version: 8.0.31
+  datadirVolumeClaimTemplate:
+    accessModes: 
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+  mycnf: |
+    [mysqld]
+    default-time-zone='Asia/Seoul'
+    collation-server = utf8_unicode_ci
+    character-set-server = utf8

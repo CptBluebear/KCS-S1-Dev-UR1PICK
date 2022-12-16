@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: kafe-auth
+  name: kafe-auth
+  namespace: kafe
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kafe-auth
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: kafe-auth
+    spec:
+      containers:
+      - image: 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-auth:latest
+        name: kafe-auth
+        imagePullPolicy: Always
+        resources: {}
+        volumeMounts:
+        - name: properties
+          mountPath: /configuration
+          readOnly: true
+      volumes:
+      - name: properties
+        secret:
+          secretName: auth-properties
+          optional: false
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: kafe-auth
+  name: kafe-auth
+  namespace: kafe
+spec:
+  ports:
+  - port: 48080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: kafe-auth
+  type: NodePort
+status:
+  loadBalancer: {}

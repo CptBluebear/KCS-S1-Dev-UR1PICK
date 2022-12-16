@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: kafe-mail
+  name: kafe-mail
+  namespace: kafe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafe-mail
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: kafe-mail
+    spec:
+      containers:
+      - image: 839325387125.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-mail:latest
+        imagePullPolicy: Always
+        name: kafe-mail
+        resources: {}
+        volumeMounts:
+        - name: properties
+          mountPath: /configuration
+          readOnly: true
+      volumes:
+      - name: properties
+        secret:
+          secretName: mail-properties
+          optional: false
+status: {}
+

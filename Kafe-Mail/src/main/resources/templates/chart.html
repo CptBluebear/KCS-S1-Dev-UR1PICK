@@ -1,0 +1,68 @@
+<!-- 주간 리포트 -->
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kafe📊</title>
+</head>
+<body>
+<table align="center">
+    <tr align="center" >
+        <th colspan="2">
+            <h2 style="font-size: 24px; line-height: 32px;font-weight: 700; text-align: center; color: rgb(17 24 39);">Kafe</h2>
+
+            <h2 style="font-size: 20px; line-height: 28px;font-weight: 700; text-align: center; color: rgb(17 24 39);">
+                <span>[[${name}]]</span>님의 주간리포트 📊
+            </h2>
+        </th>
+    </tr>
+    <tr align="center">
+        <td colspan="2" style="padding:30px;">
+            <h2 style="font-size: 20px; line-height: 28px;font-weight: 700; text-align: center; color: rgb(17 24 39);">
+                유입경로
+            </h2>
+        </td>
+    </tr>
+    <tr align="center">
+        <td>
+            <img th:src="${browserData}" alt="report" style="display: block; margin:auto 0px; width: 615px;">
+        </td>
+        <td>
+            <img th:src="${snsData}" alt="report" style="display: block; margin:auto 0px; width: 615px;">
+        </td>
+    </tr>
+    <tr align="center" >
+        <td colspan="2" style="padding:30px;">
+            <h2 style="font-size: 20px; line-height: 28px;font-weight: 700; text-align: center; color: rgb(17 24 39);">
+                접속 기기
+            </h2>
+        </td>
+    </tr>
+    <tr align="center" style="padding:20px 0px;">
+        <td colspan="2">
+            <img th:src="${osData}" alt="report" style="display: block; margin:auto 0px; width: 615px;">
+        </td>
+    </tr>
+    <tr align="center">
+        <td colspan="2" style="padding:30px;">
+            <h2 style="font-size: 20px; line-height: 28px;font-weight: 700; text-align: center; color: rgb(17 24 39);">
+                요일별 접속자 추이
+            </h2>
+        </td>
+    </tr>
+    <tr align="center">
+        <td colspan="2">
+            <img th:src="${dayOfWeekData}" alt="report" style="display: block; margin:auto 0px; width: 615px;">
+        </td>
+    </tr>
+    <tr align="center">
+        <td colspan="2" style="padding:30px;">
+            <h2 style="font-size: 20px; line-height: 28px;font-weight: 700; text-align: center; color: rgb(17 24 39);">
+                Copyright 2022 Kafe. All rights reserved.
+            </h2>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

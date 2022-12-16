@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: kafe-redirect
+  name: kafe-redirect
+  namespace: kafe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafe-redirect
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: kafe-redirect
+    spec:
+      containers:
+      - image: 839325387125.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-redirect:latest
+        imagePullPolicy: Always
+        name: kafe-redirect
+        resources: {}
+        volumeMounts:
+        - name: properties
+          mountPath: /configuration
+          readOnly: true
+        - name: redirect-log
+          mountPath: /logs
+      volumes:
+      - name: properties
+        secret:
+          secretName: redirect-properties
+          optional: false
+      - name: redirect-log
+        persistentVolumeClaim:
+          claimName: redirect-pvc
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: kafe-redirect
+  name: kafe-redirect
+  namespace: kafe
+spec:
+  ports:
+  - port: 48082
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: kafe-redirect
+  type: NodePort
+status:
+  loadBalancer: {}
+

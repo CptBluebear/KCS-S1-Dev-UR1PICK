@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: selenium-standalone
+  name: selenium-standalone
+  namespace: kafe
+spec:
+  containers:
+  - image: 839325387125.dkr.ecr.ap-northeast-2.amazonaws.com/selenium-standalone-chromium:latest
+    imagePullPolicy: Always
+    name: selenium-standalone
+    volumeMounts:
+    - mountPath: /dev/shm
+      name: shmdir
+  restartPolicy: Always
+  volumes:
+  - name: shmdir
+    emptyDir:
+      medium: Memory
+      sizeLimit: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: selenium-standalone
+  name: selenium-standalone
+  namespace: kafe
+spec:
+  ports:
+  - port: 4444
+    protocol: TCP
+    targetPort: 4444
+  selector:
+    app: selenium-standalone
+  type: NodePort

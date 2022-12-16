@@ -1,0 +1,47 @@
+ image: docker:stable
+
+ variables:
+  DOCKER_REGISTRY: 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com
+  AWS_DEFAULT_REGION: ap-northeast-2
+  DOCKER_DRIVER: overlay2
+  IMAGE_NAME: kafe-auth
+
+ services:
+  - docker:dind
+ 
+ stages :
+  - build
+  - deploy
+
+ build:
+   image: docker:latest
+   stage: build
+   services:
+     - docker:dind
+   script:
+    - echo $CI_COMMIT_SHORT_SHA
+    - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com
+
+#    - docker build -t kafe-auth:latest .
+    - docker build -t kafe-auth:$CI_COMMIT_SHORT_SHA .
+
+#    - docker tag kafe-auth:latest 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-auth:latest
+    - docker tag kafe-auth:$CI_COMMIT_SHORT_SHA 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-auth:$CI_COMMIT_SHORT_SHA
+
+#    - docker push 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-auth:latest
+    - docker push 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-auth:$CI_COMMIT_SHORT_SHA
+
+
+ deploy:
+   image: 
+     name: bitnami/kubectl:latest
+     entrypoint: [""]
+   stage: deploy
+
+   script:
+    - echo "Starting to deploy" 
+
+#    - sed -i "s/latest/$CI_COMMIT_SHORT_SHA/gi" kafe-front.yaml
+#    - kubectl apply -f auth-deployment.yaml --kubeconfig=/home/gitlab-runner/.kube/config
+    - kubectl set image -n kafe deployment/kafe-auth kafe-auth=503984144450.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-auth:$CI_COMMIT_SHORT_SHA --kubeconfig=/home/gitlab-runner/.kube/config
+

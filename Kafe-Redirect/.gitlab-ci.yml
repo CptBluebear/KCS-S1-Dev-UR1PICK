@@ -1,0 +1,45 @@
+ image: docker:stable
+
+ variables:
+  DOCKER_REGISTRY: 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com
+  AWS_DEFAULT_REGION: ap-northeast-2
+  DOCKER_DRIVER: overlay2
+  IMAGE_NAME: kafe-auth
+
+ services:
+  - docker:dind
+ 
+ stages :
+  - build
+  - deploy
+
+ build:
+   image: docker:latest
+   stage: build
+   services:
+     - docker:dind
+   script:
+    - echo $CI_COMMIT_SHORT_SHA
+    - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com
+
+#    - docker build -t kafe-redirect:latest .
+    - docker build -t kafe-redirect:$CI_COMMIT_SHORT_SHA .
+
+#    - docker tag kafe-redirect:latest 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-redirect:latest
+    - docker tag kafe-redirect:$CI_COMMIT_SHORT_SHA 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-redirect:$CI_COMMIT_SHORT_SHA
+
+#    - docker push 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-redirect:latest
+    - docker push 503984144450.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-redirect:$CI_COMMIT_SHORT_SHA
+
+ deploy:
+   image: 
+     name: bitnami/kubectl:latest
+     entrypoint: [""]
+   stage: deploy
+
+   script:
+    - echo "Starting to deploy" 
+
+#    - sed -i "s/latest/$CI_COMMIT_SHORT_SHA/gi" kafe-front.yaml
+#    - kubectl apply -f redirect-deployment.yaml
+    - kubectl set image -n kafe deployment/kafe-redirect kafe-redirect=503984144450.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-redirect:$CI_COMMIT_SHORT_SHA

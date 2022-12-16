@@ -1,0 +1,45 @@
+ image: docker:stable
+
+ variables:
+  DOCKER_REGISTRY: 839325387125.dkr.ecr.ap-northeast-2.amazonaws.com
+  AWS_DEFAULT_REGION: ap-northeast-2
+  DOCKER_DRIVER: overlay2
+  IMAGE_NAME: kafe-preview
+
+ services:
+  - docker:dind
+ 
+ stages :
+  - build
+  - deploy
+
+ build:
+   image: docker:latest
+   stage: build
+   services:
+     - docker:dind
+   script:
+    - echo $CI_COMMIT_SHORT_SHA
+    - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 839325387125.dkr.ecr.ap-northeast-2.amazonaws.com
+
+#    - docker build -t kafe-preview:latest .
+    - docker build -t kafe-preview:$CI_COMMIT_SHORT_SHA .
+
+#    - docker tag kafe-preview:latest 839325387125.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-preview:latest
+    - docker tag kafe-preview:$CI_COMMIT_SHORT_SHA 839325387125.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-preview:$CI_COMMIT_SHORT_SHA
+
+#    - docker push 839325387125.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-preview:latest
+    - docker push 839325387125.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-preview:$CI_COMMIT_SHORT_SHA
+
+ deploy:
+   image: 
+     name: bitnami/kubectl:latest
+     entrypoint: [""]
+   stage: deploy
+
+   script:
+    - echo "Starting to deploy" 
+
+#    - sed -i "s/latest/$CI_COMMIT_SHORT_SHA/gi" kafe-front.yaml
+#    - kubectl apply -f preview-deployment.yaml
+    - kubectl set image -n kafe deployment/kafe-preview kafe-preview=839325387125.dkr.ecr.ap-northeast-2.amazonaws.com/kafe-preview:$CI_COMMIT_SHORT_SHA
